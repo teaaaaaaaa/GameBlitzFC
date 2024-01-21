@@ -14,6 +14,7 @@ copy and copyT instructions:
 these have unique functionalities, allowing blocks of data to be copied around. They're controlled by IO registers, and can copy up to 1 megabyte of data per frame.
 if it's in the middle of drawing a row when it hits the limit, it will draw the row first then halt all data transfers (for performance reasons).
 clipped pixels do not count towards the 1 megabyte data copy limit.
+Scaled data will wrap around every 256 pixels. No more, no less.
 
 The game blitz has a 32-bit address space, arranged as follows:
 	0x00000000 - 0x0000FF7F: Work RAM
