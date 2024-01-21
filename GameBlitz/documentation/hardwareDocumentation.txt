@@ -1,4 +1,4 @@
-CPUs: an 8 mhz graphics processor and an 8 mhz audio processor, both are 16-bit.
+CPUs: 2 identical 8 mhz 16-bit CPUs, one for graphics and one for audio. Both are 16-bit.
 RAM: 64kb of WRAM.
 graphics: 240 x 200 frame buffer.
 audio: 2 signed 16-bit PCM channels, one for the left channel and one for the right channel, that can go up to 24 khz (CPU driven).
