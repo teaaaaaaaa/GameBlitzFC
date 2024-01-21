@@ -1,0 +1,98 @@
+000000|111|222|33|44
+bits 0 - 5: opcode
+bits 6 - 8: register 1
+bits 9 - 11: register 2 & control
+bits 12 - 13: register size 1
+bits 14 - 15: register size 2 & control
+
+Note that when programming, [register 1] and [register 2] should be replaced with any of the 8 registers the system provides, or combination of registers.
+The amount of registers can vary based on size: it has 8 8-bit registers, 4 16-bit registers, and 2 32-bit registers.
+The stack pointer is 16-bit. It cannot go outside of WRAM, so consider using other methods if you're writing data outside of WRAM.
+
+symbols:
+# - denotes an assembly instruction.
+$ - creates an address reference/instructions with values can use this to load address references.
+(Each address reference is treated as an index, so the max value for an address reference is 10,000, and there can be up to 10,000 of them. Use them wisely.)
+
+* - *include, Includes a file. Use the file path enclosed in brackets[] to include a file, don't include the quotation marks.
+/ - for comments, the compiler will just ignore it.
+{ - address offset table, AOT: denotes a syntax structure ({$NUM}: NUM,NUM;), which can create an array of offsets from a given address. Just make sure that it comes after the address that it's referencing.
+: - creates an address reference for AOTs/instructions with values can use this to load the addresses of AOTs.
+< - name of the output file. It's not strictly required as the name will just default to "output.blitz". Make sure to include the ".blitz" extension as well.
+
+note that *include will only include raw file data, it can't add assembly code to the current file unless it's in binary
+(but I would advise against including binary assembly code as that can cause instructions with hard coded addresses to point to the wrong memory).
+
+If you're writing assembly code, Make sure to follow the format very closely, or else the compiler won't recognize the instructions.
+don't put instructions, addresses, or file includes on the same line together and don't put anything before the symbols.
+additionally, make sure your code is formatted correctly. For instance, you can't have "ld a,b", it has to be "ld a, b".
+make sure the address modes are correct. Brackets[] are for values/data and parentheses() are for addresses.
+Address references, when declared, cannot be hex values. If they are, then it might cause unexpected behavior.
+
+opcodes:
+
+0 - nop     no operation
+1 - inc [register 1]     increment register 1
+2 - dec [register 1]     decrement register 1
+3 - cp [register 1], [register 2]      compare register 1 to register 2, result is stored in X
+4 - jr [register 1]      jump relative to address of register 1 (signed)
+
+if the last 2 control bits and bit 11 are set, this changes:
+0: jr
+1: jr NX    (not equal to X)
+2: jr X     (equal to X)
+3: jr GRX (greater than X)
+if bit 11 is set, the command is automatically:
+jr LX (less than X)
+register 1 is used for this operation
+
+5 - jp (register 1)      jump to an address specified by register 1
+
+if the last 2 control bits and bit 11 are set, this changes:
+0: jp
+1: jp NX    (not equal to X)
+2: jp X     (equal to X)
+3: jp GRX (greater than X)
+if bit 11 is set, the command is automatically:
+jp LX (less than X)
+register 1 is used for this operation
+
+6 - jru [register 1]     jump relative unsigned, uses register 1
+
+if the last 2 control bits and bit 11 are set, this changes:
+0: jru
+1: jru NX   (not equal to X)
+2: jru X    (equal to X)
+3: jru GRX (greater than X)
+if bit 11 is set, the command is automatically:
+jru LX (less than X)
+Register 1 is used for this operation, bit 9 is used to indicate if the jump is backwards/forwards
+
+7 - copy (register 1), (register 2)        copies data at address of register 1 to address of register 2, size uses byte in IO
+8 - copyT (register 1), (register 2)       copies data at address of register 1 to address of register 2, but pixels with value 0 are not copied, allowing for transparency
+9 - SL [register 1]      shifts register 1 left
+10 - SR [register 1]      shifts register 1 right
+11 - RL [register 1]      rotates register 1 left
+12 - RR [register 1]      rotates register 1 right
+13 - OR [register 1], [register 2]     performs the OR operation on register 1 using register 2
+14 - XOR [register 1], [register 2]    performs the XOR operation on register 1 using register 2
+15 - AND [register 1], [register 2]    performs the AND operation on register 1 using register 2
+16 - NOT [register 1]    performs the NOT operation on register 1
+17 - call [register 1]      calls a function at address of register 1
+18 - ret        returns from function
+19 - ld sp, [register 1]   loads the stack pointer with whatever is in register 1
+20 - set [register1], [register2]      copies register 1 to register 2
+21 - set [register 1], (register 2)     copies data at address of register 2 to register 1
+22 - push [register 1]       pushes whatever's on register 1 to the stack
+23 - pop [register 1]        pops the top of the stack to register 1.
+24 - jp (up to 32-bit address)	jumps to a location in memory, independent of registers, size of instruction depends on size of register 2
+25 - ld [register 1], [up to 32-bit value]	loads a value into register 1, size of instruction depends on size of register 2
+26 - sub [register 1], [register 2]		subtracts register 2 from register 1
+27 - add [register 1], [register 2]		adds register 2 to register 1
+28 - subCLIP [register 1], [register 2]		subtracts register 2 from register 1 but the result does not wrap around
+29 - addCLIP [register 1], [register 2]		adds register 2 to register 1 but the result does not wrap around
+30 - set (register 1), [register 2]     copies register 2 to address of register 1
+31 - inc (register 1)		increments data at address of register 1
+32 - dec (register 1)		decrements data at address of register 1
+33 - halt       halts the CPU and waits for the next frame to begin
+34 - AOUT       outputs the 16-bit PCM channel

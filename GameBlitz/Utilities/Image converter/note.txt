@@ -1,0 +1,4 @@
+The palette art converter creates a 16 x 16 representation of an image in the form of palette data.
+Its use case is very specific. Its resolution is fixed at 16 x 16, and it only exports in a single 15bpp format.
+
+How is this different from the 15bpp image converter? Well it doesn't split the image into 2 planes.

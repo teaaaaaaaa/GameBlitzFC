@@ -1,0 +1,27 @@
+a: d-pad left
+d: d-pad right
+w: d-pad up
+s: d-pad down
+e: start button
+r: select button
+z: A button
+x: B button
+c: X button
+v: Y button
+f: left bumper
+g: right bumper
+h: open/close graphics debugger
+j: scroll right by 1 pixel in graphics debugger
+k: scroll left by 1 pixel in graphics debugger
+n: scroll down in graphics debugger
+m: scroll up in graphics debugger
+o: load file
+u: enable/disable grayscale mode in graphics debugger
+
+for image converter:
+o: open file
+j & k: adjust header offset left and right respectively
+w: scroll up
+d: scroll down
+s: decrease horizontal width
+z: increase horizontal width

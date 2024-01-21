@@ -1,0 +1,8 @@
+Image format:
+
+-has to be a .ppm file
+-has to be exported as RGB.
+-has to be exported as raw data, not ascii.
+
+if it's 8bpp, go to image -> mode -> indexed -> generate optimum palette, and set the maximum number of colors to 256.
+if it's 15bpp, the amount of colors does not matter.

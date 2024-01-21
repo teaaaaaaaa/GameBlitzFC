@@ -1,0 +1,71 @@
+CPUs: an 8 mhz graphics processor and an 8 mhz audio processor, both are 16-bit.
+RAM: 64kb of WRAM.
+graphics: 240 x 200 8bpp frame buffer.
+audio: 2 signed 16-bit PCM channels, one for the left channel and one for the right channel, that can go up to 24 khz (CPU driven).
+
+Both CPUs share the same memory but have their own program counters.
+once either CPU begins execution again it picks up where it left off. Both have their own registers.
+the graphics processor starts operation at ROM address 0x00020000 and the audio processor starts operation at 0x00020008.
+either the graphics processor is operating or the audio processor is operating, not both, so make sure their operations don't overlap.
+if they do overlap, it may cause glitches, crashes, or unexpected behavior.
+Additionally, the graphics processor cannot output audio. Attempting to do so will result in silence.
+
+copy and copyT instructions:
+these have unique functionalities, allowing blocks of data to be copied around. They're controlled by IO registers, and can copy up to 1 megabyte of data per frame.
+if it's in the middle of drawing a row when it hits the limit, it will draw the row first then halt all data transfers (for performance reasons).
+clipped pixels do not count towards the 1 megabyte data copy limit.
+
+The game blitz has a 32-bit address space, arranged as follows:
+	0x00000000 - 0x0000FF7F: Work RAM
+	0x0000FF80 - 0x0000FFFF: I/O
+	0x00010000 - 0x000101FF: palettes
+	0x00010200 - 0x0001BD7F: frame buffer
+	0x0001BD80 - 0x0001FFFF: unused
+	0x00020000 - 0xFFFFFFFF: ROM
+	
+	There are several registers in IO, here's what they do:
+		
+	0xFF80 - the fade to black register. All on-screen colors are subtracted from this register. There is no fade to white register.
+	0xFF81 - copy and copyT instruction settings
+	
+	bit 0: 0 enables row mode while 1 disables it. In row mode, the copy destination automatically gets incremented by 240 minus the data size, for each row.
+	bit 1: 0 disables horizontal scaling while 1 enables it.
+	bit 2: 0 disables horizontal flipping, 1 enables it.
+	bit 3: 0 disables vertical scaling, 1 enables it.
+	bit 4: 0 disables vertical flipping, 1 enables it.
+	
+	0xFF82 - width of data to copy in pixels.
+	0xFF83 - height of data to copy in pixels.
+	0xFF84 & 0xFF85 - 15-bit horizontal scale register. Values smaller than 255 scale wider, values greater than 255 scale thinner.
+	0xFF86 & 0xFF87 - 15-bit vertical scale register. Values smaller than 255 scale taller, values greater than 255 scale shorter.
+	0xFF88 - X origin register.
+	0xFF89 - Y origin register.
+	0xFF8A - clip left register. If set, only pixels with an X offset greater than or equal to this value will be copied.
+	0xFF8B - clip up register. If set, only pixels with a Y offset greater than or equal to this value will be copied.
+	0xFF8C - absolute width. If greater than 0, this will override the source width, making it independent from the destination width.
+	0xFF8D - unused
+	0xFF8E & 0xFF8F - channel 1 (left only)
+	0xFF90 & 0xFF91 - channel 2 (right only)
+	0x0FF92 & 0xFF93 - controller inputs
+	
+	bit 0: left, d-pad
+	bit 1: right, d-pad
+	bit 2: up, d-pad
+	bit 3: down, d-pad
+	bit 4: start
+	bit 5: select
+	bit 6: A (bottom button)
+	bit 7: B (right button)
+	bit 8: X (left button)
+	bit 9: Y (top button)
+	bit 10: left bumper
+	bit 11: right bumper
+	0x0FF94 - mode
+	0 - 8bpp mode
+	in 8 bpp mode, the frame buffer is utilized without relying on WRAM.
+	1 - 15bpp mode
+	in 15 bpp mode, the frame buffer and the lower 48kb of WRAM (from 0x0000 - 0xBB7F) contain the upper and lower planes of 15bpp image data respectively. Use sparingly.
+	(note that the fade register has no effect in 15bpp mode)
+	2 - blend mode
+	in blend mode, buffer 1 is located in the lower 48kb of WRAM. Each buffer's colors are halved and added with each other independently of the 15bpp limitation, allowing for translucency. Use sparingly.
+	3 and beyond: invalid, trying to access these modes will cause the console to crash.
