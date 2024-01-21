@@ -10,4 +10,5 @@ Written in c++, it has:
 - 3 display modes
 
 It also has its own assembly language and compiler. See the documentation for more info.
+
 the audio uses portaudio, the display uses openGL, and the file handling stuff uses tinyfiledialogs.
