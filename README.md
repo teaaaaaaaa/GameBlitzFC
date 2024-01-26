@@ -12,3 +12,5 @@ Written in c++, it has:
 It also has its own assembly language and compiler. See the documentation for more info.
 
 the audio uses portaudio, the display uses openGL, and the file handling stuff uses tinyfiledialogs.
+
+the compiler is for ROMs, to run it, just run Main.exe.
