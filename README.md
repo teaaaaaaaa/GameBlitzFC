@@ -13,4 +13,4 @@ It also has its own assembly language and compiler. See the documentation for mo
 
 the audio uses portaudio, the display uses openGL, and the file handling stuff uses tinyfiledialogs.
 
-the compiler is for ROMs, to run it, just run Main.exe.
+the compiler is for blitz assembly, to run the game blitz, just run Main.exe.
