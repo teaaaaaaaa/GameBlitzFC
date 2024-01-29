@@ -129,10 +129,9 @@ void loadFileIntoArray(const char* filePath, std::vector<unsigned char>& data) {
         file.read(reinterpret_cast<char*>(data.data()), fileSize);
         headerCheck = 0;
         isPPMFile = 1;
-        while (headerCheck < 28)
+        while (headerCheck < 1)
         {
-        if (fileData[headerCheck] != headerCompare[headerCheck])
-        isPPMFile = 0;
+        isPPMFile = 1;
         headerCheck ++;
         }
         if (isPPMFile == 0) {
@@ -151,6 +150,13 @@ void loadFileIntoArray(const char* filePath, std::vector<unsigned char>& data) {
 
 void convertImage()
 {
+i = 0;
+while (i < 256)
+{
+imagePaletteOffsets[i] = 0xFFFFFFFF;
+palettes[i] = 0;
+i ++;
+}
 i = headerOffset;
 imageWriteOffset = 0;
 paletteIndex = 0;
@@ -229,6 +235,11 @@ i ++;
 fileData.resize(0);
 convertImage();
 convertImage();
+while (imageWriteOffset <= 1000000)
+{
+frameBuffer[imageWriteOffset] = 0;
+imageWriteOffset ++;
+}
 }
 
 void display()
