@@ -236,9 +236,9 @@ unsigned char instructionFlagTable[] =
 0,
 0,
 0,
-0,
-0,
-0,
+1,
+1,
+1,
 0,
 0,
 0,
@@ -910,7 +910,7 @@ else
 {
 for (dynamicImagePoint = imagePoint1 + clipLeft; dynamicImagePoint < imagePoint2; dynamicImagePoint ++)
 {
-if ((imageScaleOffset >> 8) < copySize & (YScaleCounter2 >> 8) < YDataSize & (imageScaleOffset >> 8) >= clipLeft & (RAM[imagePoint1 + (imageScaleOffset >> 8) + (imageOffsetTable[YScaleCounter2 >> 8])]) > 0)
+if ((imageScaleOffset >> 8) < copySize & (YScaleCounter2 >> 8) < YDataSize & (imageScaleOffset >> 8) >= clipLeft & (RAM[imagePoint1 - (imageScaleOffset >> 8) + (imageOffsetTable[YScaleCounter2 >> 8])]) > 0)
 RAM[getRegisterValue2] = RAM[imagePoint2 - (imageScaleOffset >> 8) + (imageOffsetTable[YScaleCounter2 >> 8])];
 imageScaleOffset += getScale;
 writeFlagBuffer.set(getRegisterValue2, 1);
